@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3A3BDD43247FA497006351A5 /* test_multiple.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 3A3BDD42247FA497006351A5 /* test_multiple.applescript */; };
 		3A7D3D75247F3B9F005D6636 /* demo_error.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 3A7D3D74247F3B9F005D6636 /* demo_error.applescript */; };
+		3A84559A247FC89A007B60EA /* license in Resources */ = {isa = PBXBuildFile; fileRef = 3A845599247FC89A007B60EA /* license */; };
 		3AA9B9DE247DBD12000BB789 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA9B9DD247DBD12000BB789 /* Indicator.swift */; };
 		3AA9B9E4247DC678000BB789 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AE0BE40247BFAA300832B75 /* MainMenu.xib */; };
 		3AC27799247C3F670045CFC4 /* IndicatorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC27798247C3F670045CFC4 /* IndicatorState.swift */; };
@@ -25,6 +26,7 @@
 		3A7D3D74247F3B9F005D6636 /* demo_error.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = demo_error.applescript; sourceTree = "<group>"; };
 		3A7E0E36247F33010012173E /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		3A7E0E38247F33230012173E /* demo.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = demo.applescript; sourceTree = "<group>"; };
+		3A845599247FC89A007B60EA /* license */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license; sourceTree = "<group>"; };
 		3A95FBEE247BFE3D00ACF120 /* bad_icon.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad_icon.json; sourceTree = "<group>"; };
 		3AA9B9DD247DBD12000BB789 /* Indicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indicator.swift; sourceTree = "<group>"; };
 		3AC27798247C3F670045CFC4 /* IndicatorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorState.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		3AE0BE30247BFAA200832B75 = {
 			isa = PBXGroup;
 			children = (
+				3A845599247FC89A007B60EA /* license */,
 				3A7E0E36247F33010012173E /* readme.md */,
 				3AC2779E247C4F5D0045CFC4 /* json */,
 				3ADA4564247EBBE7004A4911 /* scripts */,
@@ -176,6 +179,7 @@
 			files = (
 				3AE0BE3F247BFAA300832B75 /* Assets.xcassets in Resources */,
 				3AECA654247C217F00EC397E /* Progress.sdef in Resources */,
+				3A84559A247FC89A007B60EA /* license in Resources */,
 				3AA9B9E4247DC678000BB789 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A3BDD43247FA497006351A5 /* test_multiple.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 3A3BDD42247FA497006351A5 /* test_multiple.applescript */; };
 		3A7D3D75247F3B9F005D6636 /* demo_error.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 3A7D3D74247F3B9F005D6636 /* demo_error.applescript */; };
 		3AA9B9DE247DBD12000BB789 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA9B9DD247DBD12000BB789 /* Indicator.swift */; };
 		3AA9B9E4247DC678000BB789 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AE0BE40247BFAA300832B75 /* MainMenu.xib */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A3BDD42247FA497006351A5 /* test_multiple.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = test_multiple.applescript; sourceTree = "<group>"; };
 		3A7D3D74247F3B9F005D6636 /* demo_error.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = demo_error.applescript; sourceTree = "<group>"; };
 		3A7E0E36247F33010012173E /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		3A7E0E38247F33230012173E /* demo.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = demo.applescript; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				3A7D3D74247F3B9F005D6636 /* demo_error.applescript */,
 				3A7E0E38247F33230012173E /* demo.applescript */,
 				3AC2779C247C4F3E0045CFC4 /* test.applescript */,
+				3A3BDD42247FA497006351A5 /* test_multiple.applescript */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				3AE0BE55247BFAE500832B75 /* utilities.swift in Sources */,
 				3AC27799247C3F670045CFC4 /* IndicatorState.swift in Sources */,
 				3AE0BE3D247BFAA200832B75 /* AppDelegate.swift in Sources */,
+				3A3BDD43247FA497006351A5 /* test_multiple.applescript in Sources */,
 				3AA9B9DE247DBD12000BB789 /* Indicator.swift in Sources */,
 				3A7D3D75247F3B9F005D6636 /* demo_error.applescript in Sources */,
 			);
@@ -341,6 +345,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = de.adriannier.progress;
 				PRODUCT_NAME = Progress;
@@ -368,6 +373,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = de.adriannier.progress;
 				PRODUCT_NAME = Progress;

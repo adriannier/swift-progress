@@ -78,27 +78,13 @@ extension Indicator {
     
     @objc func complete(_ command: NSScriptCommand?) {
         
-        if command != nil && canceled {
-            
-            command!.scriptErrorNumber = -128
-            command!.scriptErrorString = "User canceled."
-            
-        } else {
-            
-            update(IndicatorState(completed: true))
-            
-        }
+        update(IndicatorState(completed: true))
         
     }
     
     @objc func abort(_ command: NSScriptCommand?) {
         
-        if command != nil && canceled {
-            command!.scriptErrorNumber = -128
-            command!.scriptErrorString = "User canceled."
-        } else {
-            update(IndicatorState(aborted: true))
-        }
+        update(IndicatorState(aborted: true))
         
     }
     

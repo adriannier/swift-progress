@@ -18,57 +18,62 @@ extension AppDelegate {
             
             let specifiedInfoPath = NSString(string: CommandLine.arguments[1]).expandingTildeInPath
             
-            if fileExists(at: specifiedInfoPath) {
-                if isReadable(at: specifiedInfoPath) {
-                    jsonPath = specifiedInfoPath
+            if specifiedInfoPath != "-NSDocumentRevisionsDebugMode" {
+                
+                
+                if fileExists(at: specifiedInfoPath) {
+                    if isReadable(at: specifiedInfoPath) {
+                        jsonPath = specifiedInfoPath
+                    } else {
+                        errorLog("The JSON file is not readable at \(specifiedInfoPath)")
+                    }
                 } else {
-                    debugLog("The info.json file is not readable at \(specifiedInfoPath)")
+                    errorLog("The JSON file is missing at \(specifiedInfoPath)")
                 }
-            } else {
-                debugLog("The info.json file is missing at \(specifiedInfoPath)")
-            }
-            
-            if jsonPath != nil && CommandLine.arguments.count > 2 {
                 
-                // At least two command line arguments
-                
-                let specifiedCancelPath = NSString(string: CommandLine.arguments[2]).expandingTildeInPath
-                
-                if !fileExists(at: specifiedCancelPath) || isWritable(at: specifiedCancelPath) {
+                if jsonPath != nil && CommandLine.arguments.count > 2 {
                     
-                    let parent = parentDirectory(at: specifiedCancelPath)
+                    // At least two command line arguments
                     
-                    if isWritable(at: parent) {
+                    let specifiedCancelPath = NSString(string: CommandLine.arguments[2]).expandingTildeInPath
+                    
+                    if !fileExists(at: specifiedCancelPath) || isWritable(at: specifiedCancelPath) {
                         
-                        let fm = FileManager.default
+                        let parent = parentDirectory(at: specifiedCancelPath)
                         
-                        if fm.isDeletableFile(atPath: specifiedCancelPath) {
+                        if isWritable(at: parent) {
                             
-                            jsonCancelPath = specifiedCancelPath
+                            let fm = FileManager.default
                             
-                            if fileExists(at: jsonCancelPath!) {
+                            if fm.isDeletableFile(atPath: specifiedCancelPath) {
                                 
-                                do {
-                                    try fm.removeItem(atPath: jsonCancelPath!)
-                                } catch {
-                                    debugLog("Could not delete cancel file at \(jsonCancelPath!): \(error)")
+                                jsonCancelPath = specifiedCancelPath
+                                
+                                if fileExists(at: jsonCancelPath!) {
+                                    
+                                    do {
+                                        try fm.removeItem(atPath: jsonCancelPath!)
+                                    } catch {
+                                        debugLog("Could not delete cancel file at \(jsonCancelPath!): \(error)")
+                                    }
+                                    
                                 }
+                                
+                            } else {
+                                
+                                debugLog("The cancel file is not deletable at \(specifiedInfoPath)")
                                 
                             }
                             
                         } else {
-                            
-                            debugLog("The cancel file is not deletable at \(specifiedInfoPath)")
-                            
+                            debugLog("The directory for the cancel file is not writable at \(parent)")
                         }
                         
                     } else {
-                        debugLog("The directory for the cancel file is not writable at \(parent)")
+                        
+                        debugLog("The cancel file is missing at \(specifiedInfoPath)")
+                        
                     }
-                    
-                } else {
-                    
-                    debugLog("The cancel file is missing at \(specifiedInfoPath)")
                     
                 }
                 

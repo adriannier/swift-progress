@@ -1,11 +1,11 @@
-on run args
+on run
 	
 	try
 		
 		-- Initialize indicator
 		tell application "Progress"
 			launch
-			set myIndicator to make new indicator with properties {visible:true, title:"Preparing…", percentage:-1}
+			set myIndicator to make new indicator with properties {visible:true, title:"Preparing…"}
 		end tell
 		
 		delay 1
@@ -34,10 +34,6 @@ on run args
 			set perc to round (100 * i / pngCount) rounding down
 			
 			tell application "Progress" to tell myIndicator
-				if perc is 100 then
-					set icon to "/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png"
-					set title to "Done"
-				end if
 				set percentage to perc
 			end tell
 			
@@ -45,20 +41,38 @@ on run args
 			
 		end repeat
 		
+		-- Show indicator as complete
+		tell application "Progress" to tell myIndicator
+			set icon to "/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png"
+			set title to "Done"
+		end tell
+		
 	on error eMsg number eNum
+		
+		log eMsg
 		
 		if eNum = -128 then -- User canceled
 			
-			-- Hide Progress
+			-- Update indicator
+			tell application "Progress" to tell myIndicator
+				set percentage to -1
+				set icon to ""
+				set title to "Cleaning up"
+				set message to ""
+			end tell
+			
+			delay 3
+			
+			-- Close indicator
 			tell application "Progress" to close myIndicator
 			
 		else
 			
-			-- Abort Progress
+			-- Abort indicator
 			tell application "Progress" to tell myIndicator
 				
 				set icon to "/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png"
-				set title to "Something went terrifically wrong"
+				set title to "Something went wrong"
 				set message to eMsg & " (" & (eNum as text) & ")"
 				abort
 				

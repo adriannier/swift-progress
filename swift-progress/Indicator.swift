@@ -15,6 +15,7 @@ import Cocoa
     
     let appDelegate: AppDelegate
     var cancelTimer = Timer()
+    var cancelTime: Date?
     let cancelTimeout = 15.0
     
     var indeterminateTimer = Timer()
@@ -147,7 +148,7 @@ import Cocoa
     }
     
     func update(_ state: IndicatorState) {
-        
+         
         var newTitle: String?
         if let title = state.title, title != self.title { newTitle = title }
         
@@ -172,126 +173,189 @@ import Cocoa
         var newVisible: Bool?
         if let isVisible = state.isVisible, isVisible != self.isVisible { newVisible = isVisible }
         
-        if canceled {
+        if newTitle != nil {
+            infoLog("Indicator[\(id)] Changing title to \"\(newTitle!)\"")
+            updateTitle(newTitle!)
+            currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(title: newTitle))
+        }
+        if newMessage != nil {
+            debugLog("Indicator[\(id)] Changing message to \"\(newMessage!)\"")
+            updateMessage(newMessage!)
+            currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(message: newMessage))
+        }
+        
+        // isVisible
+        if newVisible != nil {
             
-            debugLog("Indicator[\(id)] Cannot update a canceled indicator")
-            
-            NSScriptCommand.current()?.scriptErrorNumber = -128
-            NSScriptCommand.current()?.scriptErrorString = "User canceled."
-            
-        } else if aborted {
-           
-            debugLog("Indicator[\(id)] Cannot update an aborted indicator")
-            
-            NSScriptCommand.current()?.scriptErrorNumber = 1
-            NSScriptCommand.current()?.scriptErrorString = "Cannot update an aborted indicator."
-           
-        } else if completed {
-            
-            debugLog("Indicator[\(id)] Cannot update a completed indicator")
-            
-            NSScriptCommand.current()?.scriptErrorNumber = 1
-            NSScriptCommand.current()?.scriptErrorString = "Cannot update an indicator that is already complete."
-            
-        } else {
-            
-            
-            if newTitle != nil {
-                infoLog("Indicator[\(id)] Changing title to \"\(newTitle!)\"")
-                updateTitle(newTitle!)
+            if newVisible! {
+                infoLog("Indicator[\(id)] Showing")
+                show()
+            } else {
+                infoLog("Indicator[\(id)] Hiding")
+                hide()
             }
-            if newMessage != nil {
-                debugLog("Indicator[\(id)] Changing message to \"\(newMessage!)\"")
-                updateMessage(newMessage!)
-            }
-          
-            if newPercentage != nil {
+            
+            currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(isVisible: newVisible))
+        
+        }
+        
+        // Icon
+        if newIcon != nil {
+            infoLog("Indicator[\(id)] Changing icon to \(newIcon!)")
+            setIcon(newIcon!)
+            currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(icon: newIcon))
+        }
+        
+        if ( newPercentage != nil ) ||
+            ( newCompleted != nil && newCompleted! == true ) ||
+            ( newAborted != nil && newAborted! == true ) ||
+            ( newCanceled != nil && newCanceled! == true ) {
+            
+            if canceled && newPercentage != -1 {
                 
-                if newPercentage! > 0.0 {
+                debugLog("Indicator[\(id)] Cannot modify a canceled indicator")
+                
+                NSScriptCommand.current()?.scriptErrorNumber = -128
+                NSScriptCommand.current()?.scriptErrorString = "User canceled."
+                
+            } else if aborted {
+                
+                debugLog("Indicator[\(id)] Cannot modify an aborted indicator")
+                
+                NSScriptCommand.current()?.scriptErrorNumber = 1
+                NSScriptCommand.current()?.scriptErrorString = "Cannot modify an aborted indicator."
+                
+            } else if completed {
+                
+                debugLog("Indicator[\(id)] Cannot modify a completed indicator")
+                
+                NSScriptCommand.current()?.scriptErrorNumber = 1
+                NSScriptCommand.current()?.scriptErrorString = "Cannot modify a completed indicator."
+                
+            } else {
+                
+                if newPercentage != nil {
                     
-                    debugLog("Indicator[\(id)] Changing percentage to \(newPercentage!)")
+                    if newPercentage! > 0.0 {
+                        
+                        debugLog("Indicator[\(id)] Changing percentage to \(newPercentage!)")
+                        
+                        stopIndeterminateTimer()
+                        
+                        showProgressBar(withCancelButton: true)
+                        progressBar.isIndeterminate = false
+                        progressBar.doubleValue = newPercentage!
+                        
+                        currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(percentage: newPercentage!))
+                        
+                        if (newPercentage! == 100.0) {
+                            update(["completed": true])
+                        }
+                        
+                        
+                        
+                    } else {
+                        
+                        infoLog("Indicator[\(id)] Displaying progress bar as indeterminate")
+                        
+                        if newCanceled == nil {
+                            startIndeterminateTimer()
+                            showProgressBar(withCancelButton: false)
+                        } else {
+                            showProgressBar(withCancelButton: true)
+                        }
+                       
+                        progressBar.doubleValue = newPercentage!
+                        progressBar.isIndeterminate = true
+                        progressBar.startAnimation(nil)
+                        
+                        currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(percentage: newPercentage!))
+                        
+                    }
                     
+                }
+                
+                // Completed
+                if newCompleted != nil && newCompleted! == true {
+                    
+                    infoLog("Indicator[\(id)] Marking as completed")
+                    
+                    if let visible = currentState.isVisible, !visible {
+                        update(IndicatorState(isVisible: true))
+                    }
+                    
+                    updateMessage("")
+                    hideProgressBar()
+                    stopCancelTimer()
+                    stopIndeterminateTimer()
+                    window.standardWindowButton(.closeButton)?.isEnabled = true
+                    
+                    currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(completed: true))
+                    
+                    // NSApp.activate(ignoringOtherApps: true)
+                    
+                }
+                
+                // Aborted
+                if newAborted != nil && newAborted! == true {
+                    
+                    infoLog("Indicator[\(id)] Marking as aborted")
+                    
+                    if let visible = currentState.isVisible, !visible {
+                        update(IndicatorState(isVisible: true))
+                    }
+                    
+                    hideProgressBar()
+                    stopCancelTimer()
                     stopIndeterminateTimer()
                     
-                    showProgressBar(withCancelButton: true)
-                    progressBar.isIndeterminate = false
-                    progressBar.doubleValue = newPercentage!
-                    
-                    if (newPercentage! == 100.0) {
-                        update(["completed": true])
+                    if window.isVisible {
+                        cautionView.animator().alphaValue = 1.0
+                    } else {
+                        cautionView.alphaValue = 1.0
                     }
                     
-                } else {
+                    window.standardWindowButton(.closeButton)?.isEnabled = true
                     
-                    infoLog("Indicator[\(id)] Displaying progress bar as indeterminate")
+                    currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(aborted: true))
                     
-                    if newCanceled == nil {
-                        startIndeterminateTimer()
+                    // NSApp.activate(ignoringOtherApps: true)
+                    
+                }
+                
+                // Canceled
+                if newCanceled != nil && newCanceled! == true {
+                    
+                    infoLog("Indicator[\(id)] Marking as canceled")
+                    
+                    if let visible = currentState.isVisible, !visible {
+                        update(IndicatorState(isVisible: true))
                     }
                     
-                    showProgressBar(withCancelButton: false)
-                    progressBar.doubleValue = newPercentage!
-                    progressBar.isIndeterminate = true
+                    if appDelegate.isJsonBasedIndicator(self) {
+                        
+                        if appDelegate.json_writeCancelFile() {
+                            startCancelTimer()
+                        }
+                        
+                    } else {
+                        
+                        startCancelTimer()
+                        
+                    }
+                    
+                    currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(canceled: true))
+                    
+                    // NSApp.activate(ignoringOtherApps: true)
                     
                 }
-            }
-            
-            // Icon
-            if newIcon != nil {
-                infoLog("Indicator[\(id)] Changing icon to \(newIcon!)")
-                setIcon(newIcon!)
-            }
-            
-            // Completed
-            if newCompleted != nil && newCompleted! == true {
-                infoLog("Indicator[\(id)] Completing")
-                updateMessage("")
-                hideProgressBar()
-                window.standardWindowButton(.closeButton)?.isEnabled = true
-                
-                // NSApp.activate(ignoringOtherApps: true)
                 
             }
-            
-            // Aborted
-            if newAborted != nil && newAborted! == true {
-                infoLog("Indicator[\(id)] Aborting")
-                hideProgressBar()
-                
-                if window.isVisible {
-                    cautionView.animator().alphaValue = 1.0
-                } else {
-                    cautionView.alphaValue = 1.0
-                }
-                
-                window.standardWindowButton(.closeButton)?.isEnabled = true
-                
-                // NSApp.activate(ignoringOtherApps: true)
-                
-            }
-            
-            // Canceled
-            if newCanceled != nil && newCanceled! == true {
-                infoLog("Indicator[\(id)] Canceling")
-                // NSApp.activate(ignoringOtherApps: true)
-                
-            }
-            
-            // isVisible
-            if newVisible != nil {
-                
-                if newVisible! {
-                    infoLog("Indicator[\(id)] Showing")
-                    show()
-                } else {
-                    infoLog("Indicator[\(id)] Hiding")
-                    hide()
-                }
-            
-            }
-            
-            currentState = modifiedIndicatorState(currentState: currentState, newState: state)
-            
+
+        }
+
+        if progressBar.isIndeterminate {
+            restartIndeterminateTimer()
         }
         
     }
@@ -358,30 +422,7 @@ import Cocoa
     
     @objc func cancelButtonAction() {
         
-        update(IndicatorState(title: "", message: "", percentage: -1.0, canceled: true))
-        hideCancelButton()
-        
-        if let jsonIndicator = appDelegate.jsonIndicator {
-            
-            if jsonIndicator.id == id {
-                
-                if appDelegate.json_writeCancelFile() {
-                    
-                    appDelegate.json_startCancelFileTimer()
-                    
-                }
-                
-            } else {
-                
-                startCancelTimer()
-                
-            }
-            
-        } else {
-            
-            startCancelTimer()
-            
-        }
+        update(IndicatorState(canceled: true))
         
     }
     
@@ -391,10 +432,17 @@ import Cocoa
         
         stopCancelTimer()
         
+        cancelTime = Date()
+        
+        cancelButton.isEnabled = false
+        cancelButton.animator().alphaValue = 0.3
+        
+        debugLog("Icon: \(icon)")
+        
         cancelTimer = Timer.scheduledTimer(
-            timeInterval: cancelTimeout,
+            timeInterval: 0.5,
             target: self,
-            selector: #selector(self.performScheduledPostCancelCleanup),
+            selector: #selector(self.performScheduledCancelCheck),
             userInfo: nil,
             repeats: true
         )
@@ -404,21 +452,96 @@ import Cocoa
     func stopCancelTimer() {
         
         if cancelTimer.isValid {
+            
             debugLog("Indicator[\(id)] Stopping cancel timer")
             cancelTimer.invalidate()
+            
         }
         
     }
     
-    @objc func performScheduledPostCancelCleanup() {
+    @objc func performScheduledCancelCheck() {
         
-        infoLog("Indicator[\(id)] Cancel timeout reached")
+        if cancelButton.alphaValue < 1.0 {
+            cancelButton.animator().alphaValue = 1.0
+        } else {
+            cancelButton.animator().alphaValue = 0.3
+        }
+        
+        if self.cancelTime == nil {
+         
+            self.stopCancelTimer()
+    
+        } else if appDelegate.isJsonBasedIndicator(self) {
+            
+           DispatchQueue.global(qos: .userInteractive).async {
+                
+                if let cancelFilePath = self.appDelegate.jsonCancelPath {
+                    
+                    if !fileExists(at: cancelFilePath) {
+                        
+                        DispatchQueue.main.async {
+                            
+                            self.performCancelAction(isTimeout: false)
+                            
+                        }
+                        
+                    } else if self.cancelTime!.timeIntervalSinceNow * -1.0 >= self.cancelTimeout {
+                        
+                        do {
+                            try FileManager.default.removeItem(atPath: cancelFilePath)
+                        } catch {
+                            errorLog("Could not delete cancel file at \(cancelFilePath): \(error)")
+                        }
+                        
+                        DispatchQueue.main.async {
+                            
+                            self.performCancelAction(isTimeout: true)
+                            
+                        }
+                        
+                    }
+                    
+                } else {
+                    
+                    debugLog("Cancel file path not set")
+                    
+                }
+                
+            }
+            
+        } else if self.cancelTime!.timeIntervalSinceNow * -1.0 >= self.cancelTimeout {
+            
+            self.performCancelAction(isTimeout: true)
+     
+        }
+        
+        // appDelegate.removeIndicator(self)
+        
+    }
+    
+    func performCancelAction(isTimeout: Bool) {
+        
+        if isTimeout {
+            infoLog("Indicator[\(id)] Cancel timeout reached")
+        } else {
+            infoLog("Indicator[\(id)] Canceling")
+        }
+            
+        if appDelegate.isJsonBasedIndicator(self) {
+            appDelegate.cancelJsonTimer()
+        }
         
         stopCancelTimer()
         hideProgressBar()
         window.standardWindowButton(.closeButton)?.isEnabled = true
         
-        // appDelegate.removeIndicator(self)
+        if icon != "" {
+            cautionView.image = NSImage(named: NSImage.Name("NSStopProgressFreestandingTemplate"))
+            cautionView.frame = NSRect(x: 50, y: 10, width: 16, height: 16)
+            cautionView.contentTintColor = .red
+            cautionView.animator().alphaValue = 1.0
+        }
         
     }
     
@@ -437,8 +560,31 @@ import Cocoa
         
         infoLog("Indicator[\(id)] Starting indeterminate timer")
         
-        stopIndeterminateTimer()
+        if indeterminateTimer.isValid {
+            indeterminateTimer.invalidate()
+        }
+        
+        _startIndeterminateTimer()
                     
+        
+        
+    }
+    
+    func restartIndeterminateTimer() {
+        
+        if indeterminateTimer.isValid {
+            
+            debugLog("Indicator[\(id)] Restarting indeterminate timer")
+            indeterminateTimer.invalidate()
+            
+            _startIndeterminateTimer()
+            
+        }
+        
+    }
+    
+    func _startIndeterminateTimer() {
+        
         indeterminateTimer = Timer.scheduledTimer(
             timeInterval: indeterminateTimeout,
             target: self,
@@ -539,9 +685,11 @@ import Cocoa
         
         iconView.frame = NSRect(x: -47, y: 12, width: 48, height: 48)
         iconView.autoresizingMask = [.minXMargin]
+        iconView.imageScaling = .scaleProportionallyUpOrDown
         
         cautionView.frame = NSRect(x: -21, y: 13, width: 25, height: 25)
         cautionView.autoresizingMask = [.minXMargin]
+        cautionView.imageScaling = .scaleProportionallyUpOrDown
         
         cancelButton.frame = NSRect(x: 379, y: 27, width: 21, height: 21)
         cancelButton.autoresizingMask = [.minXMargin]
@@ -556,11 +704,30 @@ import Cocoa
             
             if let point = pointAfterPreviousIndicator() {
                 
-                window.setFrameOrigin(point)
+                
+                
+                if point.y < 0, let screen = NSScreen.main {
+                    
+                    window.setFrameOrigin(
+                        NSPoint(
+                            x: point.x,
+                            y: screen.frame.size.height - CGFloat(24 + windowHeight)
+                        )
+                    )
+                    
+                } else {
+                    
+                    window.setFrameOrigin(point)
+                    
+                }
                 
             } else {
                 
                 window.center()
+                
+                
+                
+                
                 
             }
             
@@ -575,6 +742,7 @@ import Cocoa
         }
         
         window.orderFrontRegardless()
+        window.makeKey()
         
     }
     
@@ -590,7 +758,7 @@ import Cocoa
         
         let indicatorCount = appDelegate.indicators.count
         
-        if indicatorCount > 1 {
+        if indicatorCount > 0 {
             
             var previousIndicator: Indicator?
             

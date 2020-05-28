@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "${SRCROOT}/input_files/bad_icon.json"
+            argument = "${SRCROOT}/json/bad_icon.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

@@ -8,6 +8,8 @@
 
 import Cocoa
 
+let debugMode = false
+
 @NSApplicationMain
 @objcMembers
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -28,9 +30,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var jsonTimer = Timer()
     let jsonFileUpdateFrequency = 1.0
     
-    var jsonCancelTime: Date?
-    let jsonCancelTimeout = 15.0
-
     // MARK: -
     // MARK: Application
     
@@ -40,8 +39,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if jsonPath != nil {
             
-            json_cancelTimer()
-            
+            cancelJsonTimer()
+                
             if let state = json_stateFromFile() {
                 
                 jsonIndicator = Indicator(state: state)
@@ -81,7 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if self.indicators.count == 0 && self.jsonIndicator == nil {
             
-            infoLog("Will exit in 10 seconds if there are still no indicators left")
+            infoLog("Will exit in 10 seconds if there are still no indicators")
             
             exitTimer = Timer.scheduledTimer(
                 timeInterval: 10,
@@ -92,12 +91,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             )
             
         }
-
+        
     }
-
+    
     func cancelExitTimer() {
         
-        exitTimer.invalidate()
+        if exitTimer.isValid { exitTimer.invalidate() }
         
     }
     
@@ -143,6 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if jsonIndicator != nil && indicator.id == jsonIndicator!.id {
             
+            cancelJsonTimer()
             jsonIndicator = nil
             
         } else {
@@ -164,14 +164,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: -
     // MARK: JSON file
-  
-    func json_cancelTimer() {
+    
+    
+    func isJsonBasedIndicator(_ indicator: Indicator) -> Bool {
         
-        jsonTimer.invalidate()
+        if jsonIndicator != nil {
+            
+            if jsonIndicator!.id == indicator.id {
+                
+                return true
+            }
+            
+        }
+        
+        return false
+        
+    }
+    
+    func cancelJsonTimer() {
+        
+        if jsonTimer.isValid { jsonTimer.invalidate() }
         
     }
     
     @objc func json_performScheduledStateUpdate() {
+        
+        debugLog("Trying to update state from JSON file")
         
         DispatchQueue.global(qos: .userInteractive).async {
             
@@ -181,17 +199,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     
                     if let indicator = self.jsonIndicator {
                         
-                        if !indicator.canceled {
-                            
-                            indicator.update(newInfo)
-                            
-                            if indicator.completed {
-                                
-                                self.json_cancelTimer()
-                                
-                            }
-                            
-                        }
+                        indicator.update(newInfo)
                         
                     }
                     
@@ -203,67 +211,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
     }
     
-    @objc func json_performScheduledCancelUpdate() {
-        
-        if self.jsonIndicator != nil {
-            
-            infoLog("Waiting for cancel file to disappear")
-            
-            DispatchQueue.global(qos: .userInteractive).async {
-                
-                if self.jsonCancelPath != nil {
-                    
-                    if (self.jsonCancelTime != nil) {
-                        
-                        if self.jsonCancelTime!.timeIntervalSinceNow * -1 >= self.jsonCancelTimeout {
-                            
-                            infoLog("Cancel timeout reached")
-                            
-                            do {
-                                try FileManager.default.removeItem(atPath: self.jsonCancelPath!)
-                            } catch {
-                                errorLog("Could not delete cancel file at \(self.jsonCancelPath!): \(error)")
-                            }
-                            
-                            DispatchQueue.main.async {
-                                
-                                self.json_cancelTimer()
-                                
-                                if let indicator = self.jsonIndicator {
-                                    indicator.performScheduledPostCancelCleanup()
-                                }
-                            }
-                            
-                        }
-                    }
-                    
-                    
-                    if !fileExists(at: self.jsonCancelPath!) {
-                        
-                        DispatchQueue.main.async {
-                            
-                            self.json_cancelTimer()
-                            
-                            if let indicator = self.jsonIndicator {
-                                indicator.performScheduledPostCancelCleanup()
-                            }
-                        }
-                        
-                    }
-                    
-                } else {
-                    
-                    debugLog("Cancel file path not set")
-                    
-                }
-                
-            }
-            
-        }
-        
-    }
-    
-   func json_stateFromFile() -> IndicatorState? {
+    func json_stateFromFile() -> IndicatorState? {
         
         do {
             
@@ -304,9 +252,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if jsonCancelPath != nil {
             
-            json_cancelTimer()
-            
-            jsonCancelTime = Date()
+            let jsonCancelTime = Date()
             
             do {
                 
@@ -330,30 +276,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
     
-    func json_startCancelFileTimer() {
-        
-        if jsonIndicator != nil {
-            
-            if jsonCancelPath != nil {
-                
-                if (jsonCancelTime != nil) {
-                    
-                    json_cancelTimer()
-                    
-                    jsonTimer = Timer.scheduledTimer(
-                        timeInterval: jsonFileUpdateFrequency,
-                        target: self,
-                        selector: #selector(self.json_performScheduledCancelUpdate),
-                        userInfo: nil,
-                        repeats: true
-                    )
-                    
-                }
-                
-            }
-            
-        }
-        
-    }
+    
     
 }

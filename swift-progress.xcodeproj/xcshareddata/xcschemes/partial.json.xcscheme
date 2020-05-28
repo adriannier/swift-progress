@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "${SRCROOT}/input_files/partial.json"
+            argument = "${SRCROOT}/json/partial.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

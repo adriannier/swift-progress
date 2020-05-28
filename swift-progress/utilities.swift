@@ -4,8 +4,6 @@
 
 import Foundation
 
-let debugMode = false
-
 func debugLog(_ msg: String) {
    
     if debugMode { print(msg) }

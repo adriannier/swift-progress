@@ -110,9 +110,15 @@ on run args
 			
 		end repeat
 		
-		-- Hide Progress
+		
 		if automaticallyClose then
+            -- Hide Progress
 			tell application "Progress" to close myIndicator
+        else
+            -- Show as done
+            tell application "Progress" to tell myIndicator
+                set title to "Done"
+            end tell
 		end if
 		
 	on error eMsg number eNum

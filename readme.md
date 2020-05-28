@@ -34,11 +34,11 @@ end tell
 ```
 When the `percentage` is set to a value below zero an indeterminate progress is displayed. 
 
-The indicator is automatically set to be complete when the percentage reaches 100. No further percentage update except with `-1` are allowed past this point.
+The `indicator` is automatically set to be complete when the `percentage` reaches 100. No further `percentage` updates except with `-1` are allowed past this point.
 
-If there are no updates to a newly created indicator for 15 seconds, the user is presented with a cancel button. 
+If there are no updates to a newly created `indicator` for 15 seconds, the user is presented with a cancel button. 
 
-If the cancel button is pressed your script has another 15 seconds to finish processing otherwise the user will be able to close the indicator.
+If the cancel button is pressed your script has another 15 seconds to finish processing otherwise the user will be able to close the `indicator`.
 
 ## Usage without AppleScript
 

@@ -1,6 +1,6 @@
 {
-    "percentage": -1,
-    "title": "This is the title 2",
+    "percentage": 50,
+    "title": "This is the title",
     "message": "This is a descriptive message",
     "icon": "/System/Library/CoreServices/Dock.app/Contents/Resources/url@2x.png"
 }

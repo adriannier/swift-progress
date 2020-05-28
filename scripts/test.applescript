@@ -60,7 +60,7 @@ on run args
 		-- Initialize Progress
 		tell application "Progress"
 			
-			activate
+			launch
 			
 			set myIndicator to make new indicator with properties {title:"Preparing…", icon:"/System/Library/CoreServices/Dock.app/Contents/Resources/url@2x.png", percentage:-1}
 			

@@ -22,11 +22,15 @@ repeat with i from 1 to 100
     -- Do something
     
     tell application "Progress" to tell myIndicator
-        if i is 100 then set title to "Done"
         set percentage to i
     end tell
     
 end repeat
+
+tell application "Progress" to tell myIndicator
+    set title to "Done"
+end tell
+
 ```
 When the `percentage` is set to a value below zero an indeterminate progress is displayed. 
 

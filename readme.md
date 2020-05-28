@@ -4,7 +4,7 @@ Scriptable macOS application to show and control progress indicators
 
 ## Installation
 
-A ready-made, code-signed and notarized build of this project can be downloaded from [https://adriannier.de/downloads/Progress1.0.0.zip](https://adriannier.de/downloads/Progress_1.0.1.28.zip).
+A ready-made, code-signed and notarized build of this project can be downloaded from [here](https://adriannier.de/downloads/Progress_1.0.1.28.zip).
 
 ## Usage with AppleScript
 

@@ -57,7 +57,7 @@ Example:
 ```
 As long as the user does not cancel the progress, this file is checked every second for changes to be mirrored by the indicator.
 
-**Second argument**: Path to *cancel-file*
+**Second argument**: Path to `cancel-file`
 
 Example
 ```
@@ -67,7 +67,7 @@ Example
 
 ```
 
-Once the user presses the cancel button the *cancel-file* is created to give your application or script a chance to know of the user’s intent. At this point you are encouraged to delete the *cancel-file* which will update the indicator accordingly. If the *cancel-file* does not disappear within 15 seconds, the user is allowed to close the progress indicator and the *cancel-file* is deleted.
+Once the user presses the cancel button the `cancel-file` is created to give your application or script a chance to know of the user’s intent. At this point you are encouraged to delete the `cancel-file` which will update the indicator accordingly. If the `cancel-file` does not disappear within 15 seconds, the user is allowed to close the progress indicator and the `cancel-file` is deleted.
 
 ## Building
 

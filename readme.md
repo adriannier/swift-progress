@@ -2,6 +2,8 @@
 
 Scriptable macOS application to show and control progress indicators
 
+<img src="preview.png" alt="Preview of a scriptable progress indicator">
+
 ## Installation
 
 A ready-made, code-signed and notarized build of this project can be downloaded from [here](https://adriannier.de/downloads/Progress_1.0.1.28.zip).

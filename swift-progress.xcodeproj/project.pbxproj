@@ -27,6 +27,7 @@
 		3A7E0E36247F33010012173E /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		3A7E0E38247F33230012173E /* demo.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = demo.applescript; sourceTree = "<group>"; };
 		3A845599247FC89A007B60EA /* license */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license; sourceTree = "<group>"; };
+		3A84559C247FCE0B007B60EA /* preview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preview.png; sourceTree = "<group>"; };
 		3A95FBEE247BFE3D00ACF120 /* bad_icon.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad_icon.json; sourceTree = "<group>"; };
 		3AA9B9DD247DBD12000BB789 /* Indicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indicator.swift; sourceTree = "<group>"; };
 		3AC27798247C3F670045CFC4 /* IndicatorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorState.swift; sourceTree = "<group>"; };
@@ -84,6 +85,7 @@
 		3AE0BE30247BFAA200832B75 = {
 			isa = PBXGroup;
 			children = (
+				3A84559C247FCE0B007B60EA /* preview.png */,
 				3A845599247FC89A007B60EA /* license */,
 				3A7E0E36247F33010012173E /* readme.md */,
 				3AC2779E247C4F5D0045CFC4 /* json */,

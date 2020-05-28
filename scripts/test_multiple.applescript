@@ -24,7 +24,7 @@ on run
 			
 		end if
 		
-		delay .5
+		delay 0.5
 		
 	end repeat
 	
@@ -40,7 +40,7 @@ on run
 		
 		do shell script "/usr/bin/osascript " & quoted form of (POSIX path of scriptPath) & " " & item r of argumentRoulette & " > /dev/null 2>&1 &"
 		
-		delay 0.5
+		delay 1
 		
 	end repeat
 	

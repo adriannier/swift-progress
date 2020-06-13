@@ -143,6 +143,8 @@ import Cocoa
         
         update(defaultIndicatorState())
         
+        startIndeterminateTimer()
+        
         debugLog("Indicator[\(id)] Created indicator \(self.id)")
         
     }
@@ -248,7 +250,7 @@ import Cocoa
                         
                         currentState = modifiedIndicatorState(currentState: currentState, newState: IndicatorState(percentage: newPercentage!))
                         
-                        if (newPercentage! == 100.0) {
+                        if (Float(newPercentage!) == 100.0) {
                             update(["completed": true])
                         }
                         

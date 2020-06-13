@@ -1,88 +1,161 @@
+global myIndicator
+
 on run
 	
 	try
 		
-		-- Initialize indicator
-		tell application "Progress"
-			launch
-			set myIndicator to make new indicator with properties {visible:true, title:"Preparing…"}
-		end tell
+		indicatorInitialize("Preparing…", "")
 		
-		delay 1
+		delay 1 -- For demonstration purposes
 		
 		-- Find PNGs in Resources for Dock.app
 		set findOutput to do shell script "find /System/Library/CoreServices/Dock.app/Contents/Resources -iname '*@2x.png'"
 		set pngPaths to reverse of paragraphs of findOutput
 		set pngCount to count of pngPaths
 		
-		-- Update indicator
-		tell application "Progress" to tell myIndicator
-			set icon to item -1 of pngPaths
-			set title to "Processing " & ((count of pngPaths) as text) & " images"
-			delay 1
-		end tell
+		indicatorIcon(item -1 of pngPaths)
+		indicatorTitle("Processing " & ((count of pngPaths) as text) & " images")
+		
+		delay 1 -- For demonstration purposes
 		
 		repeat with i from 1 to pngCount
 			
-			-- Update Progress Message
-			tell application "Progress" to tell myIndicator
-				set icon to item i of pngPaths
-				set message to (i as text) & ": " & item -1 of my explodeString(item i of pngPaths, "/", false)
-			end tell
+			indicatorIcon(item i of pngPaths)
+			indicatorMessage((i as text) & ": " & item -1 of explodeString(item i of pngPaths, "/", false))
 			
-			-- Increment Progress
+			-- Calculate new percentage
 			set perc to round (100 * i / pngCount) rounding down
 			
-			tell application "Progress" to tell myIndicator
-				set percentage to perc
-			end tell
+			indicatorPercentage(perc)
 			
-			delay 0.05
+			delay 0.05 -- For demonstration purposes
 			
 		end repeat
 		
-		-- Show indicator as complete
-		tell application "Progress" to tell myIndicator
-			set icon to "/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png"
-			set title to "Done"
-		end tell
+		indicatorIcon("/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png")
+		indicatorTitle("Done")
 		
 	on error eMsg number eNum
 		
-		log eMsg
-		
 		if eNum = -128 then -- User canceled
 			
-			-- Update indicator
-			tell application "Progress" to tell myIndicator
-				set percentage to -1
-				set icon to ""
-				set title to "Cleaning up"
-				set message to ""
-			end tell
-			
-			delay 3
-			
-			-- Close indicator
-			tell application "Progress" to close myIndicator
+			indicatorClose()
 			
 		else
 			
-			-- Abort indicator
-			tell application "Progress" to tell myIndicator
-				
-				set icon to "/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png"
-				set title to "Something went wrong"
-				set message to eMsg & " (" & (eNum as text) & ")"
-				abort
-				
-			end tell
+			indicatorIcon("/System/Library/CoreServices/Dock.app/Contents/Resources/finder@2x.png")
+			indicatorTitle("Something went wrong")
+			indicatorMessage(eMsg & " (" & (eNum as text) & ")")
+			indicatorAbort()
 			
 		end if
 		
 	end try
 	
 end run
+
+on indicatorInitialize(indicatorTitle, indicatorIcon)
+	
+	-- Initialize indicator
+	
+	try
+		
+		tell application "Finder" to get application file id "de.adriannier.progress"
+		
+		tell application "Progress"
+			launch
+			set myIndicator to make new indicator with properties {visible:true, title:indicatorTitle, icon:indicatorIcon}
+		end tell
+		
+	on error eMsg
+		
+		log eMsg
+		
+		set myIndicator to false
+		
+	end try
+	
+end indicatorInitialize
+
+on indicatorTitle(aTitle)
+	
+	-- Set indicator title
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to tell myIndicator
+			set title to aTitle
+		end tell
+		
+	end if
+	
+end indicatorTitle
+
+on indicatorPercentage(aPercentage)
+	
+	-- Set indicator percentage (0 to 100.0)
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to tell myIndicator
+			set percentage to aPercentage
+		end tell
+		
+	end if
+	
+end indicatorPercentage
+
+on indicatorMessage(aMessage)
+	
+	-- Set indicator message
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to tell myIndicator
+			set message to aMessage
+		end tell
+		
+	end if
+	
+end indicatorMessage
+
+on indicatorIcon(aPath)
+	
+	-- Set indicator icon
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to tell myIndicator
+			set icon to aPath
+		end tell
+		
+	end if
+	
+end indicatorIcon
+
+on indicatorClose()
+	
+	-- Close the indicator
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to close myIndicator
+		
+	end if
+	
+end indicatorClose
+
+on indicatorAbort()
+	
+	-- Abort the indicator
+	
+	if myIndicator is not false then
+		
+		tell application "Progress" to tell myIndicator to abort
+		
+	end if
+	
+end indicatorAbort
 
 on explodeString(aString, aDelimiter, lastItem)
 	

@@ -98,7 +98,7 @@ on run args
 					set theButton to button returned of (display dialog "Demonstrate an error?" buttons {"Raise Error", "Continue"} default button 2 cancel button 1)
 					
 				on error eMsg number eNum
-					error "This should be an error message" number 123
+					error "This could be your error message" number 123
 				end try
 				
 			end if
@@ -112,13 +112,14 @@ on run args
 		
 		
 		if automaticallyClose then
-            -- Hide Progress
+			-- Hide Progress
 			tell application "Progress" to close myIndicator
-        else
-            -- Show as done
-            tell application "Progress" to tell myIndicator
-                set title to "Done"
-            end tell
+		else
+			-- Show as done
+			tell application "Progress" to tell myIndicator
+				set title to "Done"
+				set message to "All items processed"
+			end tell
 		end if
 		
 	on error eMsg number eNum

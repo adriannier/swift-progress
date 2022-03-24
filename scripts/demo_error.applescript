@@ -145,7 +145,8 @@ on indicatorClose()
 	if myIndicator is not false then
 		
 		tell application "Progress" to close myIndicator
-		
+		set myIndicator to false
+
 	end if
 	
 end indicatorClose

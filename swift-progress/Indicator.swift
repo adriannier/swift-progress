@@ -621,7 +621,7 @@ import Cocoa
         
         window.delegate = self
         window.backingType = .buffered
-        window.styleMask = [.titled, .miniaturizable]
+        window.styleMask = [.titled, .miniaturizable, .closable]
         window.isMovableByWindowBackground = true
         window.titlebarAppearsTransparent = true
         window.level = .floating

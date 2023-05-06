@@ -1,5 +1,9 @@
 # Changes
 
+## 1.0.3
+
+- Minor UI optimizations (cancel button position and font weights)
+
 ## 1.0.2
 
 - Setting `percentage` to 100.0 (`real`) instead of 100 (`integer`) with AppleScript now correctly sets the indicator as done

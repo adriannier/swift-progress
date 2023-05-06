@@ -632,6 +632,7 @@ import Cocoa
         titleField.isEditable = false
         titleField.drawsBackground = false
         titleField.isSelectable = true
+        titleField.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
         
         messageField.isBezeled = false
         messageField.isEditable = false
@@ -693,7 +694,7 @@ import Cocoa
         cautionView.autoresizingMask = [.minXMargin]
         cautionView.imageScaling = .scaleProportionallyUpOrDown
         
-        cancelButton.frame = NSRect(x: 379, y: 27, width: 21, height: 21)
+        cancelButton.frame = NSRect(x: 379, y: 25, width: 21, height: 21)
         cancelButton.autoresizingMask = [.minXMargin]
         
     }
@@ -903,8 +904,12 @@ import Cocoa
             
             let messagePoint = NSMakePoint(
                 messageField.frame.origin.x,
-                messageField.frame.origin.y + CGFloat(6.0)
+                messageField.frame.origin.y + CGFloat(8.0)
             )
+            
+            // Set font
+            titleField.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            messageField.textColor = NSColor.labelColor
             
             if window.isVisible {
                 
